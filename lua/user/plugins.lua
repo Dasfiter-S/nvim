@@ -73,65 +73,58 @@ return {
 
   -- Keybind Helper
   {
-    "folke/which-key.nvim",
-    event = "VeryLazy",  -- Load after other keymaps are set
-    opts = {
-      plugins = {
-        marks = true,
-        registers = true,
-        spelling = { enabled = true, suggestions = 20 },
-        presets = { operators = false, motions = true, text_objects = true },
-      },
-      icons = {
-        breadcrumb = "»",
-        separator = "➜",
-        group = "+",
-      },
-      layout = { spacing = 3 },
-      win = { no_overlap = true, border = "rounded" },
-    },
-    keys = {
-      -- Core Mappings
-      { "<leader>a", "<cmd>Alpha<cr>", desc = "Alpha" },
-      { "<leader>b", "<cmd>lua require('telescope.builtin').buffers(require('telescope.themes').get_dropdown{previewer = false})<cr>", desc = "Buffers" },
-      { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Explorer" },
-      { "<leader>w", "<cmd>w!<CR>", desc = "Save" },
-      { "<leader>q", "<cmd>q!<CR>", desc = "Quit" },
-      { "<leader>c", "<cmd>Bdelete!<CR>", desc = "Close Buffer" },
-      { "<leader>h", "<cmd>nohlsearch<CR>", desc = "No Highlight" },
-      { "<leader>f", "<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{previewer = false})<cr>", desc = "Find Files" },
-      { "<leader>F", "<cmd>Telescope live_grep theme=ivy<cr>", desc = "Find Text" },
-      { "<leader>P", "<cmd>lua require('telescope').extensions.projects.projects()<cr>", desc = "Projects" },
-      -- Git Mappings
-      { "<leader>g", desc = "Git", group = true },
-      { "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", desc = "Lazygit" },
-      { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
-      { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits" },
-      { "<leader>gd", "<cmd>Gitsigns diffthis HEAD<cr>", desc = "Diff" },
-      { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Status" },
-      -- LSP Mappings
-      { "<leader>l", desc = "LSP", group = true },
-      { "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },
-      { "<leader>ld", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Diagnostics" },
-      { "<leader>lf", "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", desc = "Format" },
-      { "<leader>li", "<cmd>LspInfo<cr>", desc = "LSP Info" },
-      { "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename" },
-      -- Packer Mappings
-      { "<leader>p", desc = "Packer", group = true },
-      { "<leader>pi", "<cmd>PackerInstall<cr>", desc = "Install" },
-      { "<leader>ps", "<cmd>PackerSync<cr>", desc = "Sync" },
-      { "<leader>pu", "<cmd>PackerUpdate<cr>", desc = "Update" },
-      -- Search Mappings
-      { "<leader>s", desc = "Search", group = true },
-      { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help" },
-      { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Keymaps" },
-      { "<leader>sr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
-      -- Terminal Mappings
-      { "<leader>t", desc = "Terminal", group = true },
-      { "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", desc = "Floating Terminal" },
-      { "<leader>th", "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "Horizontal Terminal" },
-      { "<leader>tv", "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "Vertical Terminal" },
-    },
+   "folke/which-key.nvim",
+   event = "VeryLazy",
+   opts = {
+     layout = { spacing = 3 },
+     win = { no_overlap = true, border = "rounded" },
+   },
+   config = function()
+     local wk = require("which-key")
+     wk.add({
+       { "<leader>g", group = "Git" },
+       { "<leader>l", group = "LSP" },
+       { "<leader>p", group = "Lazy" },
+       { "<leader>s", group = "Search" },
+       { "<leader>t", group = "Terminal" },
+       -- Individual Key Mappings
+       { "<leader>a", "<cmd>Alpha<cr>", desc = "Alpha" },
+       { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+       { "<leader>c", "<cmd>Bdelete!<CR>", desc = "Close Buffer" },
+       { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Explorer" },
+       { "<leader>f", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+       { "<leader>F", "<cmd>Telescope live_grep<cr>", desc = "Find Text" },
+       { "<leader>h", "<cmd>nohlsearch<CR>", desc = "No Highlight" },
+       { "<leader>q", "<cmd>q!<CR>", desc = "Quit" },
+       { "<leader>w", "<cmd>w!<CR>", desc = "Save" },
+       -- Git Group (Nested with `expand = function()`)
+       { "<leader>gg", "<cmd>LazyGit<CR>", desc = "LazyGit" },
+       { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
+       { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits" },
+       { "<leader>gd", "<cmd>Gitsigns diffthis HEAD<cr>", desc = "Diff" },
+       { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Status" },
+       -- LSP Group
+       { "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },
+       { "<leader>ld", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Diagnostics" },
+       { "<leader>lf", "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", desc = "Format" },
+       { "<leader>li", "<cmd>LspInfo<cr>", desc = "LSP Info" },
+       { "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename" },
+       -- Lazy Group
+       { "<leader>pl", "<cmd>Lazy<cr>", desc = "Lazy Menu" },
+       { "<leader>pi", "<cmd>Lazy install<cr>", desc = "Install Plugins" },
+       { "<leader>ps", "<cmd>Lazy sync<cr>", desc = "Sync Plugins" },
+       { "<leader>pu", "<cmd>Lazy update<cr>", desc = "Update Plugins" },
+       { "<leader>pc", "<cmd>Lazy check<cr>", desc = "Check for Updates" },
+       -- Search Group
+       { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help" },
+       { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Keymaps" },
+       { "<leader>sr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
+       -- Terminal Group
+       { "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", desc = "Floating Terminal" },
+       { "<leader>th", "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "Horizontal Terminal" },
+       { "<leader>tv", "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "Vertical Terminal" },
+     })
+   end,
   },
 
   -- Colorschemes
