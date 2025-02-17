@@ -1,21 +1,46 @@
-require "user.options"
-require "user.keymaps"
-require "user.plugins"
-require "user.colorscheme"
-require "user.cmp"
-require "user.lsp"
-require "user.telescope"
-require "user.treesitter"
-require "user.autopairs"
-require "user.comment"
-require "user.nvim-tree"
-require "user.bufferline"
-require "user.lualine"
-require "user.toggleterm"
-require "user.project"
-require "user.impatient"
-require "user.alpha"
-require "user.whichkey"
-require "user.autocommands"
-require "user.indentline"
-require "user.gitsigns"
+-- Automatically install Lazy.nvim if not installed
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git", "clone", "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", lazypath
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Ensure `lua/user/` is recognized
+vim.opt.rtp:append(vim.fn.stdpath("config") .. "/lua")
+
+-- Load Lazy.nvim Plugins
+require("lazy").setup("user.plugins")
+
+-- Load Other Configurations
+local modules = {
+  "options",
+  "keymaps",
+  "colorscheme",
+  "cmp",
+  "lsp",
+  "telescope",
+  "treesitter",
+  "autopairs",
+  "comment",
+  "nvim-tree",
+  "bufferline",
+  "lualine",
+  "toggleterm",
+  "project",
+  "alpha",
+  "whichkey",
+  "autocommands",
+  "indentline",
+  "gitsigns",
+}
+
+for _, module in ipairs(modules) do
+  local ok, err = pcall(require, "user." .. module)
+  if not ok then
+    vim.api.nvim_err_writeln("Error loading user." .. module .. "\n\n" .. err)
+  end
+end
