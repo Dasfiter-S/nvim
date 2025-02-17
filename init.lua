@@ -21,7 +21,6 @@ require("lazy").setup("user.plugins")
 local modules = {
   "options",
   "colorscheme",
-  "whichkey",
   "keymaps",
   "cmp",
   "lsp",
