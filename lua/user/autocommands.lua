@@ -28,7 +28,24 @@ vim.cmd [[
     autocmd!
     autocmd User AlphaReady set showtabline=0 | autocmd BufUnload <buffer> set showtabline=2
   augroup end
+
 ]]
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazySyncPost",
+  callback = function()
+    vim.defer_fn(function()
+      -- Ensure Noice is actually loaded
+      local noice_ok, noice = pcall(require, "noice")
+      if noice_ok then
+        -- Fully reinitialize Noice
+        noice.setup()
+        vim.cmd("doautocmd User NoiceRedraw")
+      end
+      vim.cmd("redraw!") -- Ensures UI refresh
+    end, 500) -- Slight delay to let Lazy finish syncing
+  end,
+})
 
 -- Autoformat
 -- augroup _lsp

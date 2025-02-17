@@ -1,3 +1,6 @@
+-- Set leader keys BEFORE Lazy.nvim loads
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 -- Automatically install Lazy.nvim if not installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -11,15 +14,15 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Ensure `lua/user/` is recognized
 vim.opt.rtp:append(vim.fn.stdpath("config") .. "/lua")
-
 -- Load Lazy.nvim Plugins
 require("lazy").setup("user.plugins")
 
 -- Load Other Configurations
 local modules = {
   "options",
-  "keymaps",
   "colorscheme",
+  "whichkey",
+  "keymaps",
   "cmp",
   "lsp",
   "telescope",
@@ -32,7 +35,6 @@ local modules = {
   "toggleterm",
   "project",
   "alpha",
-  "whichkey",
   "autocommands",
   "indentline",
   "gitsigns",

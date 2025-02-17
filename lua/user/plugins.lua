@@ -51,7 +51,7 @@ return {
     config = function() require("project_nvim").setup({}) end
   },
 
-  -- **✅ Fixed: Updated `indent-blankline` for v3**
+  -- **Updated `indent-blankline` for v3**
   {
     "lukas-reineke/indent-blankline.nvim",
     main = "ibl",
@@ -75,8 +75,11 @@ return {
   {
     "folke/which-key.nvim",
     event = "VimEnter",
+    lazy = false, -- Ensure Which-Key loads immediately
+    priority = 1000, -- Load before other keymaps
     config = function() require("which-key").setup() end
   },
+
 
   -- Colorschemes
   { "folke/tokyonight.nvim", lazy = false, priority = 1000 },
@@ -99,19 +102,20 @@ return {
   { "neovim/nvim-lspconfig" },
   {
     "williamboman/mason.nvim",
-    config = function() require("mason").setup() end
-  },
-  {
-  "williamboman/mason-lspconfig.nvim",
-  config = function()
-    require("mason-lspconfig").setup({
-      ensure_installed = {
-        "lua_ls",
-        "pyright",
-        "jsonls",
-      }
-    })
-  end,
+    dependencies = {
+      "williamboman/mason-lspconfig.nvim", -- Ensure it's loaded after mason
+      "neovim/nvim-lspconfig",
+    },
+    config = function()
+      require("mason").setup()
+      require("mason-lspconfig").setup({
+        ensure_installed = {
+          "lua_ls",
+          "pyright",
+          "jsonls",
+        }
+      })
+    end,
   },
   { "jose-elias-alvarez/null-ls.nvim" },
   {
@@ -155,11 +159,25 @@ return {
   -- Noice.nvim (Better UI)
   {
     "folke/noice.nvim",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "rcarriga/nvim-notify",
-    },
-    event = "VeryLazy",
-    config = function() require("noice").setup() end
+    lazy = false,
+    config = function()
+      require("which-key").setup({})
+      require("noice").setup({
+        lsp = {
+          override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true,
+          },
+        },
+      })
+    end,
+  },
+  -- Fast load times, caches instead of compiling
+  {
+  "lewis6991/impatient.nvim",
+  config = function()
+    require("impatient")
+  end,
   },
 }
