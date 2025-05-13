@@ -23,7 +23,6 @@ local modules = {
   "colorscheme",
   "keymaps",
   "cmp",
-  "lsp",
   "telescope",
   "treesitter",
   "autopairs",
@@ -36,7 +35,7 @@ local modules = {
   "alpha",
   "autocommands",
   "indentline",
-  "gitsigns",
+  "fixes.illuminate_override"
 }
 
 for _, module in ipairs(modules) do

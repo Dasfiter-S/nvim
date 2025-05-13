@@ -145,7 +145,24 @@ return {
   { "rafamadriz/friendly-snippets", event = "InsertEnter" },
 
   -- LSP Setup
-  { "neovim/nvim-lspconfig" },
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      local lspconfig = require("lspconfig")
+      local handlers = require("user.handlers")
+      handlers.setup() -- ← run your diagnostic and handler setup
+      local servers = { "lua_ls", "pyright", "jsonls" } -- Add others as needed
+      for _, server in ipairs(servers) do
+        server = vim.split(server, "@")[1]
+        if server ~= "null-ls" then -- ✅ prevent accidental null-ls registration
+          lspconfig[server].setup({
+            on_attach = handlers.on_attach,
+            capabilities = handlers.capabilities,
+          })
+        end
+      end
+    end,
+  },
   {
     "williamboman/mason.nvim",
     dependencies = {
@@ -163,16 +180,44 @@ return {
       })
     end,
   },
-  { "jose-elias-alvarez/null-ls.nvim" },
+  {
+    "jay-babu/mason-null-ls.nvim",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "nvimtools/none-ls.nvim",
+    },
+    config = function()
+      require("mason-null-ls").setup({
+        ensure_installed = nil, -- or set a list like { "stylua", "eslint_d" }
+        automatic_installation = false, -- true = auto-install missing packages
+        handlers = {}, -- can map individual tools to custom options
+      })
+    end,
+  },
+  {
+    "nvimtools/none-ls.nvim",
+    config = function()
+      local null_ls = require("null-ls")
+      null_ls.setup({
+        debug = false,
+        -- 👇 NO sources here — mason-null-ls will handle them
+        on_attach = function(_, bufnr)
+          vim.notify("✅ none-ls safe on_attach", vim.log.levels.INFO)
+          vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>nf", "<cmd>lua vim.lsp.buf.format()<CR>", { noremap = true, silent = true })
+        end,
+      })
+    end,
+  },
   {
   "RRethy/vim-illuminate",
-  event = "BufRead",
+  event = "LspAttach",
   config = function()
     require("illuminate").configure({
       providers = { "lsp", "treesitter", "regex" },
       delay = 200,
       filetypes_denylist = { "alpha", "NvimTree", "TelescopePrompt" },
       under_cursor = true,
+      auto_attach = false,
     })
   end,
   },
@@ -196,7 +241,14 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     event = "BufRead",
-    config = function() require("gitsigns").setup() end
+    config = function()
+      local ok, gitsigns = pcall(require, "gitsigns")
+      if not ok then
+        vim.notify("Failed to load gitsigns", vim.log.levels.WARN)
+        return
+      end
+      gitsigns.setup()
+    end,
   },
 
   -- Icons

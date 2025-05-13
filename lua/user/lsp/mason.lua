@@ -36,10 +36,21 @@ end
 local opts = {}
 
 for _, server in pairs(servers) do
-	opts = {
-		on_attach = require("user.lsp.handlers").on_attach,
-		capabilities = require("user.lsp.handlers").capabilities,
-	}
+  opts = {
+    on_attach = function(client, bufnr)
+      -- If it's null-ls, don't use full handlers
+      if client.name == "null-ls" then
+        local ok, handlers = pcall(require, "user.handlers")
+        if ok and handlers.lsp_keymaps then
+          handlers.lsp_keymaps(bufnr)
+        end
+      else
+        require("user.lsp.handlers").on_attach(client, bufnr)
+      end
+    end,
+    capabilities = require("user.lsp.handlers").capabilities,
+  }
+
 
 	server = vim.split(server, "@")[1]
 

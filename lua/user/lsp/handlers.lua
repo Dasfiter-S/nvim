@@ -81,11 +81,12 @@ M.on_attach = function(client, bufnr)
 	end
 
 	lsp_keymaps(bufnr)
-	local status_ok, illuminate = pcall(require, "illuminate")
-	if not status_ok then
-		return
-	end
-	illuminate.on_attach(client)
+  local status_ok, illuminate = pcall(require, "illuminate")
+  if status_ok and client and client.server_capabilities then
+    if client.server_capabilities.documentHighlightProvider then
+      illuminate.on_attach(client)
+    end
+  end
 end
 
 return M
